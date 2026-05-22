@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adulting Unlocked — Student Survival Platform</title>
+  <meta name="description" content="Your all-in-one survival guide for engineering college life. Find hostels, manage money, plan your career, support your mind, and find study buddies." />
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/css/global.css"/>
+  <link rel="stylesheet" href="/css/home.css"/>
+
+  <style>
+    /* Module-specific accent colors */
+    .mod-campus  { --mod-color: #4f46e5; --mod-bg: linear-gradient(135deg, #4f46e5, #7c3aed); }
+    .mod-finance { --mod-color: #10b981; --mod-bg: linear-gradient(135deg, #10b981, #059669); }
+    .mod-career  { --mod-color: #f59e0b; --mod-bg: linear-gradient(135deg, #f59e0b, #ef4444); }
+    .mod-mind    { --mod-color: #ec4899; --mod-bg: linear-gradient(135deg, #ec4899, #8b5cf6); }
+    .mod-study   { --mod-color: #06b6d4; --mod-bg: linear-gradient(135deg, #06b6d4, #4f46e5); }
+
+    .module-card-icon { background: var(--mod-bg); }
+    .module-card:hover { border-color: var(--mod-color) !important; }
+    .module-card:hover .module-card-title { color: var(--mod-color); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     NAVBAR
+═══════════════════════════════════════════════════════ -->
+<nav class="navbar" id="mainNav">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between w-100">
+
+      <!-- Brand -->
+      <a href="/" class="navbar-brand d-flex align-items-center gap-2">
+        <div style="width:36px;height:36px;background:var(--grad-primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;">🎓</div>
+        <span>Adulting Unlocked</span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <div class="d-none d-lg-flex align-items-center gap-1">
+        <a href="/pages/campus-life.html" class="nav-link">Campus Life</a>
+        <a href="/pages/finance.html" class="nav-link">Finance</a>
+        <a href="/pages/career.html" class="nav-link">Careers</a>
+        <a href="/pages/gradmind.html" class="nav-link">Grad Mind</a>
+        <a href="/pages/studybuddy.html" class="nav-link">StudyBuddy</a>
+      </div>
+
+      <!-- Auth Buttons -->
+      <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-outline btn-sm d-none d-md-inline-flex" onclick="showAuthModal('login')">
+          <i class="bi bi-person"></i> Login
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="showAuthModal('register')">
+          Get Started <i class="bi bi-arrow-right"></i>
+        </button>
+        <button class="d-lg-none btn btn-ghost btn-sm" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+          <i class="bi bi-list" style="font-size:20px;color:var(--gray-700)"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="offcanvas offcanvas-end" id="mobileMenu" tabindex="-1">
+  <div class="offcanvas-header border-bottom">
+    <span class="navbar-brand">🎓 Adulting Unlocked</span>
+    <button class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="d-flex flex-column gap-2">
+      <a href="/pages/campus-life.html" class="nav-link">🏠 Campus Life Mastery</a>
+      <a href="/pages/finance.html" class="nav-link">💸 Broke Grad Club</a>
+      <a href="/pages/career.html" class="nav-link">🧭 Career Compass</a>
+      <a href="/pages/gradmind.html" class="nav-link">🧠 Grad Mind</a>
+      <a href="/pages/studybuddy.html" class="nav-link">👥 StudyBuddy</a>
+      <hr/>
+      <button class="btn btn-outline w-100" onclick="showAuthModal('login')">Login</button>
+      <button class="btn btn-primary w-100" onclick="showAuthModal('register')">Get Started</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     HERO SECTION
+═══════════════════════════════════════════════════════ -->
+<section class="hero" id="hero">
+  <div class="hero-bg">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+    <div class="hero-grid-overlay"></div>
+  </div>
+
+  <div class="container hero-content w-100">
+    <div class="row align-items-center g-5">
+
+      <!-- Left: Copy -->
+      <div class="col-lg-6">
+        <div class="hero-badge">
+          <span class="dot"></span>
+          Free for all engineering students
+        </div>
+
+        <h1 class="hero-title">
+          College Life,<br/>
+          <span class="gradient-text">Finally Decoded</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          From finding a hostel on day one to landing your dream job on the last day — 
+          Adulting Unlocked has every survival tool you need as an engineering student.
+        </p>
+
+        <div class="hero-actions">
+          <button class="btn btn-primary btn-lg" onclick="showAuthModal('register')">
+            <i class="bi bi-rocket-takeoff-fill"></i> Start for Free
+          </button>
+          <a href="#modules" class="btn btn-outline btn-lg">
+            Explore Modules <i class="bi bi-chevron-down"></i>
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hero-stat-item">
+            <div class="stat-value" data-target="12000">0</div>
+            <div class="stat-label">Students</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="stat-value" data-target="450">0</div>
+            <div class="stat-label">Hostels Listed</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="stat-value" data-target="320">0</div>
+            <div class="stat-label">Mentors</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="stat-value" data-target="95" data-suffix="%">0</div>
+            <div class="stat-label">Satisfaction</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Visual Mockup -->
+      <div class="col-lg-6 hero-visual">
+        <div style="position:relative; display:flex; justify-content:center;">
+
+          <!-- Phone mockup -->
+          <div class="hero-phone-mockup animate-float">
+            <div style="background:var(--grad-primary);height:100px;display:flex;align-items:center;justify-content:center;">
+              <span style="color:white;font-family:var(--font-display);font-size:20px;font-weight:800;">🎓 Adulting Unlocked</span>
+            </div>
+            <div style="padding:20px;">
+              <!-- Mini module cards inside phone -->
+              <div style="background:var(--gray-50);border-radius:12px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;">
+                <div style="width:36px;height:36px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;">🏠</div>
+                <div><div style="font-size:13px;font-weight:700;">Campus Life</div><div style="font-size:11px;color:var(--gray-400);">45 hostels nearby</div></div>
+              </div>
+              <div style="background:var(--gray-50);border-radius:12px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;">
+                <div style="width:36px;height:36px;background:linear-gradient(135deg,#10b981,#059669);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;">💸</div>
+                <div><div style="font-size:13px;font-weight:700;">Budget: ₹8,200</div><div style="font-size:11px;color:var(--success);">₹1,800 saved</div></div>
+              </div>
+              <div style="background:var(--gray-50);border-radius:12px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;">
+                <div style="width:36px;height:36px;background:linear-gradient(135deg,#f59e0b,#ef4444);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;">🧭</div>
+                <div><div style="font-size:13px;font-weight:700;">Career Path</div><div style="font-size:11px;color:var(--gray-400);">SDE roadmap ready</div></div>
+              </div>
+              <div style="background:var(--gray-50);border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;">
+                <div style="width:36px;height:36px;background:linear-gradient(135deg,#06b6d4,#4f46e5);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;">👥</div>
+                <div><div style="font-size:13px;font-weight:700;">StudyBuddy</div><div style="font-size:11px;color:var(--gray-400);">3 mentors matched</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating cards around phone -->
+          <div class="hero-floating-card glass animate-float-delay" style="top:-10px;left:-40px;color:var(--gray-800);">
+            ⭐ 4.9 Rating
+          </div>
+          <div class="hero-floating-card animate-float-delay2" style="bottom:80px;right:-30px;background:var(--success);color:white;">
+            ✓ Scholarship found!
+          </div>
+          <div class="hero-floating-card glass animate-float" style="bottom:-10px;left:0;color:var(--gray-800);">
+            🧠 Feeling better today
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     GLOBAL SEARCH
+═══════════════════════════════════════════════════════ -->
+<section class="search-section" id="globalSearch">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between gap-4 flex-wrap">
+      <div class="search-wrapper flex-grow-1" style="max-width:600px;">
+        <i class="bi bi-search search-icon" style="font-size:18px;"></i>
+        <input
+          type="text"
+          class="search-input"
+          id="globalSearchInput"
+          placeholder="Search hostels, scholarships, careers, mentors..."
+          autocomplete="off"
+        />
+        <button class="btn btn-primary btn-sm search-submit" onclick="performSearch()">
+          Search
+        </button>
+        <div class="search-results-dropdown" id="searchDropdown"></div>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="badge badge-primary" style="border:none;cursor:pointer;" onclick="quickSearch('hostels')">🏠 Hostels</button>
+        <button class="badge badge-success" style="border:none;cursor:pointer;" onclick="quickSearch('scholarships')">🎓 Scholarships</button>
+        <button class="badge badge-accent" style="border:none;cursor:pointer;" onclick="quickSearch('careers')">💼 Careers</button>
+        <button class="badge badge-warning" style="border:none;cursor:pointer;" onclick="quickSearch('mentors')">👥 Mentors</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     5 MODULE CARDS
+═══════════════════════════════════════════════════════ -->
+<section class="modules-section" id="modules">
+  <div class="container">
+    <!-- Header -->
+    <div class="text-center mb-5 reveal">
+      <span class="section-label">Explore Modules</span>
+      <h2 class="section-title">Everything You Need,<br/><span class="gradient-text">All in One Place</span></h2>
+      <p class="section-subtitle mx-auto">Five powerful tools built by students, for students. Each module solves a real problem you'll face in engineering college.</p>
+    </div>
+
+    <!-- Row 1: 3 cards -->
+    <div class="row g-4 mb-4">
+
+      <!-- Module 1: Campus Life -->
+      <div class="col-lg-4 col-md-6 reveal reveal-delay-1">
+        <div class="module-card mod-campus" onclick="window.location='/pages/campus-life.html'">
+          <div class="module-card-banner">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #1e1b4b 100%);display:flex;align-items:center;justify-content:center;font-size:80px;">🏙️</div>
+            <div class="module-card-banner-overlay"></div>
+            <div class="module-card-icon mod-campus">🏠</div>
+          </div>
+          <div class="module-card-body">
+            <div class="module-card-tag">Module 01</div>
+            <h3 class="module-card-title">Campus Life Mastery</h3>
+            <p class="module-card-desc">Find the perfect hostel and mess near your college. Compare ratings, check maps, and make an informed choice on day one.</p>
+            <div class="module-card-features">
+              <span class="feature-pill">🗺️ Maps</span>
+              <span class="feature-pill">⭐ Reviews</span>
+              <span class="feature-pill">📍 GPS Nav</span>
+              <span class="feature-pill">❤️ Favorites</span>
+            </div>
+            <a href="/pages/campus-life.html" class="btn btn-primary w-100" onclick="event.stopPropagation()">
+              Find Hostels & Mess <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 2: Broke Grad Club -->
+      <div class="col-lg-4 col-md-6 reveal reveal-delay-2">
+        <div class="module-card mod-finance" onclick="window.location='/pages/finance.html'">
+          <div class="module-card-banner">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg, #10b981 0%, #059669 50%, #064e3b 100%);display:flex;align-items:center;justify-content:center;font-size:80px;">💰</div>
+            <div class="module-card-banner-overlay"></div>
+            <div class="module-card-icon mod-finance">💸</div>
+          </div>
+          <div class="module-card-body">
+            <div class="module-card-tag">Module 02</div>
+            <!--<h3 class="module-card-title">Broke Grad Club</h3>-->
+            <p class="module-card-desc">Budget like a pro, track every rupee, hunt scholarships, and get AI-powered tips to actually save money as a student.</p>
+            <div class="module-card-features">
+              <span class="feature-pill">📊 Analytics</span>
+              <span class="feature-pill">🎓 Scholarships</span>
+              <span class="feature-pill">🤖 AI Tips</span>
+              <span class="feature-pill">🐷 Savings</span>
+            </div>
+            <a href="/pages/finance.html" class="btn btn-primary w-100" onclick="event.stopPropagation()" style="background:linear-gradient(135deg,#10b981,#059669);">
+              Manage Money <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 3: Career Compass -->
+      <div class="col-lg-4 col-md-6 reveal reveal-delay-3">
+        <div class="module-card mod-career" onclick="window.location='/pages/career.html'">
+          <div class="module-card-banner">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg, #f59e0b 0%, #ef4444 60%, #7c2d12 100%);display:flex;align-items:center;justify-content:center;font-size:80px;">🧭</div>
+            <div class="module-card-banner-overlay"></div>
+            <div class="module-card-icon mod-career">🚀</div>
+          </div>
+          <div class="module-card-body">
+            <div class="module-card-tag">Module 03</div>
+            <h3 class="module-card-title">Career Compass</h3>
+            <p class="module-card-desc">Explore career paths, read real alumni stories, build your roadmap, and find resources for interviews and resume building.</p>
+            <div class="module-card-features">
+              <span class="feature-pill">🗺️ Roadmaps</span>
+              <span class="feature-pill">🎤 Alumni</span>
+              <span class="feature-pill">🏛️ Govt Jobs</span>
+              <span class="feature-pill">📄 Resume</span>
+            </div>
+            <a href="/pages/career.html" class="btn btn-primary w-100" onclick="event.stopPropagation()" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">
+              Plan Your Career <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Row 2: 2 cards centered -->
+    <div class="row g-4 justify-content-center">
+
+      <!-- Module 4: Grad Mind -->
+      <div class="col-lg-4 col-md-6 reveal reveal-delay-1">
+        <div class="module-card mod-mind" onclick="window.location='/pages/gradmind.html'">
+          <div class="module-card-banner">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg, #ec4899 0%, #8b5cf6 60%, #1e1b4b 100%);display:flex;align-items:center;justify-content:center;font-size:80px;">🧠</div>
+            <div class="module-card-banner-overlay"></div>
+            <div class="module-card-icon mod-mind">💜</div>
+          </div>
+          <div class="module-card-body">
+            <div class="module-card-tag">Module 04</div>
+            <h3 class="module-card-title">Grad Mind</h3>
+            <p class="module-card-desc">A safe space for your mental health. Vent anonymously, track your mood, chat with an AI counselor, and find peer support.</p>
+            <div class="module-card-features">
+              <span class="feature-pill">🕊️ Anonymous</span>
+              <span class="feature-pill">🤖 AI Chat</span>
+              <span class="feature-pill">📈 Mood Track</span>
+              <span class="feature-pill">💬 Community</span>
+            </div>
+            <a href="/pages/gradmind.html" class="btn btn-primary w-100" onclick="event.stopPropagation()" style="background:linear-gradient(135deg,#ec4899,#8b5cf6);">
+              Open Safe Space <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 5: StudyBuddy -->
+      <div class="col-lg-4 col-md-6 reveal reveal-delay-2">
+        <div class="module-card mod-study" onclick="window.location='/pages/studybuddy.html'">
+          <div class="module-card-banner">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg, #06b6d4 0%, #4f46e5 60%, #1e1b4b 100%);display:flex;align-items:center;justify-content:center;font-size:80px;">👥</div>
+            <div class="module-card-banner-overlay"></div>
+            <div class="module-card-icon mod-study">🤝</div>
+          </div>
+          <div class="module-card-body">
+            <div class="module-card-tag">Module 05</div>
+            <h3 class="module-card-title">StudyBuddy</h3>
+            <p class="module-card-desc">Connect with seniors who've been there. Get matched with mentors by interest, skill, and goals. Never navigate college alone.</p>
+            <div class="module-card-features">
+              <span class="feature-pill">🎯 Matching</span>
+              <span class="feature-pill">💬 Chat</span>
+              <span class="feature-pill">🏷️ Skills</span>
+              <span class="feature-pill">📅 Sessions</span>
+            </div>
+            <a href="/pages/studybuddy.html" class="btn btn-primary w-100" onclick="event.stopPropagation()" style="background:linear-gradient(135deg,#06b6d4,#4f46e5);">
+              Find a Mentor <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     STATISTICS SECTION
+═══════════════════════════════════════════════════════ -->
+<section class="stats-section">
+  <div class="container position-relative">
+    <div class="text-center mb-5 reveal">
+      <h2 class="section-title" style="color:white;">Making a Real Difference</h2>
+      <p class="section-subtitle mx-auto" style="color:rgba(255,255,255,0.75);">Join thousands of students who've already unlocked a better college experience</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-3 col-md-6 reveal reveal-delay-1">
+        <div class="stat-card">
+          <span class="stat-icon">🎓</span>
+          <div class="stat-number" data-target="12000" data-suffix="+">0</div>
+          <div class="stat-label">Students Helped</div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 reveal reveal-delay-2">
+        <div class="stat-card">
+          <span class="stat-icon">🏠</span>
+          <div class="stat-number" data-target="450" data-suffix="+">0</div>
+          <div class="stat-label">Hostels Listed</div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 reveal reveal-delay-3">
+        <div class="stat-card">
+          <span class="stat-icon">💰</span>
+          <div class="stat-number" data-target="38" data-prefix="₹" data-suffix="L">0</div>
+          <div class="stat-label">Scholarships Found</div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 reveal reveal-delay-4">
+        <div class="stat-card">
+          <span class="stat-icon">🤝</span>
+          <div class="stat-number" data-target="1800" data-suffix="+">0</div>
+          <div class="stat-label">Mentor Connections</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     HOW IT WORKS
+═══════════════════════════════════════════════════════ -->
+<section style="padding:var(--section-py) 0;background:white;">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <span class="section-label">How It Works</span>
+      <h2 class="section-title">Get Started in <span class="gradient-text">3 Easy Steps</span></h2>
+    </div>
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-4 reveal reveal-delay-1">
+        <div class="text-center p-4">
+          <div style="width:80px;height:80px;background:var(--grad-soft);border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;">📝</div>
+          <div style="display:inline-block;padding:4px 14px;background:var(--gray-100);border-radius:var(--radius-full);font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:12px;letter-spacing:1px;">STEP 01</div>
+          <h4 style="font-size:1.2rem;margin-bottom:12px;">Create Your Profile</h4>
+          <p style="color:var(--gray-500);font-size:14px;line-height:1.8;">Sign up for free with your college email. Tell us your branch, year, and interests.</p>
+        </div>
+      </div>
+      <div class="col-lg-4 reveal reveal-delay-2">
+        <div class="text-center p-4">
+          <div style="width:80px;height:80px;background:linear-gradient(135deg,#cffafe,#e0e7ff);border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;">🎯</div>
+          <div style="display:inline-block;padding:4px 14px;background:var(--gray-100);border-radius:var(--radius-full);font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:12px;letter-spacing:1px;">STEP 02</div>
+          <h4 style="font-size:1.2rem;margin-bottom:12px;">Explore Your Modules</h4>
+          <p style="color:var(--gray-500);font-size:14px;line-height:1.8;">Dive into any of the 5 modules based on what you need right now — hostel, career, money, or mental peace.</p>
+        </div>
+      </div>
+      <div class="col-lg-4 reveal reveal-delay-3">
+        <div class="text-center p-4">
+          <div style="width:80px;height:80px;background:linear-gradient(135deg,#d1fae5,#cffafe);border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;">🚀</div>
+          <div style="display:inline-block;padding:4px 14px;background:var(--gray-100);border-radius:var(--radius-full);font-size:12px;font-weight:700;color:var(--gray-500);margin-bottom:12px;letter-spacing:1px;">STEP 03</div>
+          <h4 style="font-size:1.2rem;margin-bottom:12px;">Level Up Your College Life</h4>
+          <p style="color:var(--gray-500);font-size:14px;line-height:1.8;">Get matched with mentors, track your budget, plan your career. Let's navigate adulting together.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     TESTIMONIALS
+═══════════════════════════════════════════════════════ -->
+<section class="testimonials-section">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <span class="section-label">Testimonials</span>
+      <h2 class="section-title">Students Love <span class="gradient-text">Adulting Unlocked</span></h2>
+      <p class="section-subtitle mx-auto">Real stories from real students across engineering colleges in India.</p>
+    </div>
+    <div class="row g-4">
+
+      <div class="col-lg-4 col-md-6 reveal reveal-delay-1">
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">Found my hostel in 20 minutes on day one. The map feature and reviews saved me from making a terrible decision. Absolute lifesaver!</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">A</div>
+            <div>
+              <div class="testimonial-name">Arjun Sharma</div>
+              <div class="testimonial-role">1st Year, CSE — VIT Pune</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6 reveal reveal-delay-2">
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">The scholarship finder helped me get ₹50,000 I didn't even know existed. The budget tracker keeps me from going broke before month-end.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background:linear-gradient(135deg,#10b981,#059669);">P</div>
+            <div>
+              <div class="testimonial-name">Priya Nair</div>
+              <div class="testimonial-role">3rd Year, IT — COEP Pune</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6 reveal reveal-delay-3">
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">Grad Mind's anonymous vent wall helped me through exam anxiety. Knowing others feel the same way made a huge difference.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background:linear-gradient(135deg,#ec4899,#8b5cf6);">R</div>
+            <div>
+              <div class="testimonial-name">Rahul Meena</div>
+              <div class="testimonial-role">2nd Year, ENTC — VJTI Mumbai</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6 reveal reveal-delay-1">
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">Career Compass gave me a clear SDE roadmap. The alumni stories were inspiring and the interview resources were super practical.</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">S</div>
+            <div>
+              <div class="testimonial-name">Sneha Kulkarni</div>
+              <div class="testimonial-role">Final Year, CS — IIT Bombay</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6 reveal reveal-delay-2">
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">My StudyBuddy mentor helped me crack DSA in just 2 months. The matching algorithm is spot-on. Got placed at Wipro thanks to his guidance!</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background:linear-gradient(135deg,#06b6d4,#4f46e5);">K</div>
+            <div>
+              <div class="testimonial-name">Karan Patil</div>
+              <div class="testimonial-role">Final Year, CSE — Symbiosis</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6 reveal reveal-delay-3">
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-text">As a girl student from a rural background, this platform helped me find affordable accommodation and understand my financial rights. Game-changer!</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);">A</div>
+            <div>
+              <div class="testimonial-name">Ananya Singh</div>
+              <div class="testimonial-role">2nd Year, Mech — NIT Nagpur</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     FAQ SECTION
+═══════════════════════════════════════════════════════ -->
+<section class="faq-section">
+  <div class="container">
+    <div class="row g-5 align-items-start">
+      <div class="col-lg-4 reveal">
+        <span class="section-label">FAQ</span>
+        <h2 class="section-title">Common <span class="gradient-text">Questions</span></h2>
+        <p class="section-subtitle" style="font-size:15px;">Have more questions? Reach out to us at hello@adultingunlocked.in</p>
+        <div class="mt-4">
+          <a href="mailto:hello@adultingunlocked.in" class="btn btn-outline">
+            <i class="bi bi-envelope"></i> Contact Us
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-8 reveal reveal-delay-2">
+        <div id="faqAccordion">
+
+          <div class="faq-item open">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Is Adulting Unlocked completely free to use?
+              <div class="faq-icon"><i class="bi bi-plus"></i></div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">Yes! All core features are completely free for students. We believe every engineering student deserves access to good resources regardless of their financial background.</div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Are the hostel listings verified?
+              <div class="faq-icon"><i class="bi bi-plus"></i></div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">We manually verify all hostel listings before they go live. Verified hostels have a blue checkmark. We also rely on community reviews to maintain quality. Always visit before booking.</div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              How does the mentor matching work?
+              <div class="faq-icon"><i class="bi bi-plus"></i></div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">Our algorithm matches you with mentors based on your branch, interests, career goals, and skill gaps. You can also browse manually and send chat requests to any available mentor.</div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Is the Grad Mind vent wall truly anonymous?
+              <div class="faq-icon"><i class="bi bi-plus"></i></div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">Absolutely. No login required to post. No IP tracking for content. Posts are entirely anonymous by design. We only moderate for harmful content to keep the space safe.</div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Which cities and colleges does this cover?
+              <div class="faq-icon"><i class="bi bi-plus"></i></div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">We currently have strong coverage in Pune, Mumbai, Bangalore, Chennai, and Hyderabad. We're expanding rapidly. The career, finance, and mental health features work pan-India.</div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+              Can I become a mentor?
+              <div class="faq-icon"><i class="bi bi-plus"></i></div>
+            </div>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">Yes! If you're a senior or recent graduate, you can apply to become a mentor from the StudyBuddy module. All mentors are verified. It's free and incredibly rewarding.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     CTA SECTION
+═══════════════════════════════════════════════════════ -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-card reveal">
+      <h2>Your College Survival Kit<br/>Starts Here 🚀</h2>
+      <p>Join 12,000+ students who are navigating engineering college smarter with Adulting Unlocked. Free, always.</p>
+      <div class="d-flex gap-3 justify-content-center flex-wrap position-relative">
+        <button class="btn btn-white btn-lg" onclick="showAuthModal('register')">
+          <i class="bi bi-person-plus"></i> Create Free Account
+        </button>
+        <a href="#modules" class="btn btn-ghost btn-lg">
+          <i class="bi bi-grid-3x3-gap"></i> Explore Modules
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-4">
+        <div class="footer-brand">🎓 Adulting Unlocked</div>
+        <p style="font-size:14px;line-height:1.8;max-width:300px;margin-bottom:24px;">The student survival platform built for Indian engineering students. Free, practical, and made with 💜</p>
+        <div class="d-flex gap-3">
+          <a href="#" class="btn btn-ghost btn-sm" style="padding:8px 12px;"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="btn btn-ghost btn-sm" style="padding:8px 12px;"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="btn btn-ghost btn-sm" style="padding:8px 12px;"><i class="bi bi-linkedin"></i></a>
+          <a href="#" class="btn btn-ghost btn-sm" style="padding:8px 12px;"><i class="bi bi-youtube"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h5>Modules</h5>
+        <a href="/pages/campus-life.html">Campus Life</a>
+        <a href="/pages/finance.html">Broke Grad Club</a>
+        <a href="/pages/career.html">Career Compass</a>
+        <a href="/pages/gradmind.html">Grad Mind</a>
+        <a href="/pages/studybuddy.html">StudyBuddy</a>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h5>Resources</h5>
+        <a href="#">Hostel Guide</a>
+        <a href="#">Scholarship List</a>
+        <a href="#">Resume Tips</a>
+        <a href="#">Interview Prep</a>
+        <a href="#">Mental Health</a>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h5>Company</h5>
+        <a href="#">About Us</a>
+        <a href="#">Blog</a>
+        <a href="#">Careers</a>
+        <a href="#">Contact</a>
+        <a href="#">Press Kit</a>
+      </div>
+      <div class="col-6 col-lg-2">
+        <h5>Legal</h5>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+        <a href="#">Safety</a>
+      </div>
+    </div>
+    <hr class="footer-divider"/>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <p style="font-size:13px;margin:0;">© 2025 Adulting Unlocked. Made with 💜 for every engineering student in India.</p>
+      <div class="d-flex gap-3">
+        <span class="badge badge-success">🟢 All Systems Operational</span>
+        <span class="badge badge-primary">v1.0.0</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     AUTH MODAL
+═══════════════════════════════════════════════════════ -->
+<div class="modal fade auth-modal" id="authModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" style="max-width:480px;">
+    <div class="modal-content">
+      <div class="modal-body p-0">
+        <!-- Modal Header -->
+        <div style="background:var(--grad-primary);padding:32px;border-radius:0;text-align:center;color:white;">
+          <div style="font-size:40px;margin-bottom:8px;">🎓</div>
+          <h4 style="color:white;font-size:1.4rem;" id="modalTitle">Join Adulting Unlocked</h4>
+          <p style="opacity:0.8;font-size:14px;margin:0;" id="modalSubtitle">Free for all engineering students</p>
+        </div>
+
+        <div style="padding:32px;">
+          <!-- Tabs -->
+          <ul class="nav auth-tabs mb-4 p-1" style="background:var(--gray-100);border-radius:var(--radius-full);" id="authTabs">
+            <li class="nav-item flex-fill">
+              <button class="nav-link active w-100" id="loginTab" onclick="switchAuthTab('login')">Login</button>
+            </li>
+            <li class="nav-item flex-fill">
+              <button class="nav-link w-100" id="registerTab" onclick="switchAuthTab('register')">Register</button>
+            </li>
+          </ul>
+
+          <!-- Login Form -->
+          <div id="loginForm">
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-control" id="loginEmail" placeholder="your@email.com"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <input type="password" class="form-control" id="loginPassword" placeholder="••••••••"/>
+            </div>
+            <button class="btn btn-primary w-100 btn-lg mt-2" onclick="handleLogin()">
+              <i class="bi bi-box-arrow-in-right"></i> Login
+            </button>
+            <p style="text-align:center;font-size:13px;color:var(--gray-400);margin-top:16px;">
+              <a href="#">Forgot password?</a>
+            </p>
+          </div>
+
+          <!-- Register Form -->
+          <div id="registerForm" style="display:none;">
+            <div class="row g-3">
+              <div class="col-6">
+                <div class="form-group mb-0">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" class="form-control" id="regName" placeholder="Your Name"/>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-group mb-0">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-control" id="regEmail" placeholder="email@college.edu"/>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="form-group mb-0">
+                  <label class="form-label">College Name</label>
+                  <input type="text" class="form-control" id="regCollege" placeholder="e.g. COEP Pune"/>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-group mb-0">
+                  <label class="form-label">Branch</label>
+                  <input type="text" class="form-control" id="regBranch" placeholder="e.g. CSE"/>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-group mb-0">
+                  <label class="form-label">Year</label>
+                  <select class="form-control" id="regYear">
+                    <option value="">Select Year</option>
+                    <option>1</option><option>2</option><option>3</option><option>4</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="form-group mb-0">
+                  <label class="form-label">Password</label>
+                  <input type="password" class="form-control" id="regPassword" placeholder="Create a strong password"/>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-primary w-100 btn-lg mt-4" onclick="handleRegister()">
+              <i class="bi bi-rocket-takeoff"></i> Create Account
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Main JS -->
+<script src="/js/app.js"></script>
+<script src="/js/home.js"></script>
+</body>
+</html>

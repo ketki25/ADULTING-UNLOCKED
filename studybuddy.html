@@ -1,0 +1,276 @@
+/* ============================================================
+   ADULTING UNLOCKED — GLOBAL APP JS
+   ============================================================ */
+
+const API_BASE = '/api';
+
+// ─── Auth State ───────────────────────────────────────────
+const Auth = {
+  get token() { return localStorage.getItem('au_token'); },
+  get user() {
+    try { return JSON.parse(localStorage.getItem('au_user')); }
+    catch { return null; }
+  },
+  set(token, user) {
+    localStorage.setItem('au_token', token);
+    localStorage.setItem('au_user', JSON.stringify(user));
+  },
+  clear() {
+    localStorage.removeItem('au_token');
+    localStorage.removeItem('au_user');
+  },
+  isLoggedIn() { return !!this.token; }
+};
+
+// ─── API Helper ───────────────────────────────────────────
+const api = {
+  async get(path) {
+    const res = await fetch(API_BASE + path, {
+      headers: Auth.token ? { Authorization: `Bearer ${Auth.token}` } : {}
+    });
+    return res.json();
+  },
+  async post(path, data) {
+    const res = await fetch(API_BASE + path, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(Auth.token ? { Authorization: `Bearer ${Auth.token}` } : {})
+      },
+      body: JSON.stringify(data)
+    });
+    return res.json();
+  },
+  async delete(path) {
+    const res = await fetch(API_BASE + path, {
+      method: 'DELETE',
+      headers: Auth.token ? { Authorization: `Bearer ${Auth.token}` } : {}
+    });
+    return res.json();
+  }
+};
+
+// ─── Toast Notifications ──────────────────────────────────
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  toast.innerHTML = `${icons[type] || 'ℹ'} ${message}`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100%)'; toast.style.transition = 'all 0.3s'; setTimeout(() => toast.remove(), 300); }, 3500);
+}
+
+// ─── Auth Modal ───────────────────────────────────────────
+let authModalInstance;
+
+function showAuthModal(tab = 'login') {
+  const el = document.getElementById('authModal');
+  if (!el) return;
+  if (!authModalInstance) authModalInstance = new bootstrap.Modal(el);
+  switchAuthTab(tab);
+  authModalInstance.show();
+}
+
+function switchAuthTab(tab) {
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const loginTab = document.getElementById('loginTab');
+  const registerTab = document.getElementById('registerTab');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalSubtitle = document.getElementById('modalSubtitle');
+
+  if (tab === 'login') {
+    loginForm.style.display = 'block';
+    registerForm.style.display = 'none';
+    loginTab?.classList.add('active');
+    registerTab?.classList.remove('active');
+    if (modalTitle) modalTitle.textContent = 'Welcome Back!';
+    if (modalSubtitle) modalSubtitle.textContent = 'Login to your account';
+  } else {
+    loginForm.style.display = 'none';
+    registerForm.style.display = 'block';
+    loginTab?.classList.remove('active');
+    registerTab?.classList.add('active');
+    if (modalTitle) modalTitle.textContent = 'Join Adulting Unlocked';
+    if (modalSubtitle) modalSubtitle.textContent = 'Free for all engineering students';
+  }
+}
+
+async function handleLogin() {
+  const email = document.getElementById('loginEmail')?.value.trim();
+  const password = document.getElementById('loginPassword')?.value;
+  if (!email || !password) return showToast('Please fill all fields', 'error');
+
+  const result = await api.post('/auth/login', { email, password });
+  if (result.success) {
+    Auth.set(result.token, result.user);
+    showToast(`Welcome back, ${result.user.name}! 🎉`, 'success');
+    authModalInstance?.hide();
+    updateNavForAuth();
+  } else {
+    showToast(result.message || 'Login failed', 'error');
+  }
+}
+
+async function handleRegister() {
+  const name = document.getElementById('regName')?.value.trim();
+  const email = document.getElementById('regEmail')?.value.trim();
+  const password = document.getElementById('regPassword')?.value;
+  const college = document.getElementById('regCollege')?.value.trim();
+  const branch = document.getElementById('regBranch')?.value.trim();
+  const year = document.getElementById('regYear')?.value;
+  if (!name || !email || !password) return showToast('Name, email and password are required', 'error');
+
+  const result = await api.post('/auth/register', { name, email, password, college, branch, year: parseInt(year) });
+  if (result.success) {
+    Auth.set(result.token, result.user);
+    showToast(`Welcome to Adulting Unlocked, ${result.user.name}! 🚀`, 'success');
+    authModalInstance?.hide();
+    updateNavForAuth();
+  } else {
+    showToast(result.message || 'Registration failed', 'error');
+  }
+}
+
+function updateNavForAuth() {
+  const user = Auth.user;
+  if (!user) return;
+  // Swap auth buttons in navbar with user avatar
+  const authBtns = document.querySelectorAll('[onclick*="showAuthModal"]');
+  authBtns.forEach(btn => {
+    if (btn.textContent.trim().startsWith('Get Started') || btn.textContent.trim().startsWith('Login')) {
+      btn.style.display = 'none';
+    }
+  });
+}
+
+// ─── Global Search ────────────────────────────────────────
+let searchDebounce;
+
+const searchInput = document.getElementById('globalSearchInput');
+if (searchInput) {
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchDebounce);
+    const q = searchInput.value.trim();
+    if (q.length < 2) {
+      document.getElementById('searchDropdown')?.classList.remove('show');
+      return;
+    }
+    searchDebounce = setTimeout(() => liveSearch(q), 350);
+  });
+
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') performSearch();
+    if (e.key === 'Escape') document.getElementById('searchDropdown')?.classList.remove('show');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrapper')) {
+      document.getElementById('searchDropdown')?.classList.remove('show');
+    }
+  });
+}
+
+async function liveSearch(q) {
+  try {
+    const result = await api.get(`/search?q=${encodeURIComponent(q)}`);
+    if (!result.success) return;
+    renderSearchDropdown(result.data);
+  } catch {}
+}
+
+function renderSearchDropdown(data) {
+  const dropdown = document.getElementById('searchDropdown');
+  if (!dropdown) return;
+
+  if (data.total === 0) {
+    dropdown.innerHTML = `<div style="padding:20px;text-align:center;color:var(--gray-400);">No results found</div>`;
+    dropdown.classList.add('show');
+    return;
+  }
+
+  let html = '';
+
+  if (data.hostels?.length) {
+    html += renderSearchCategory('🏠 Hostels', data.hostels.map(h =>
+      `<a href="/pages/campus-life.html?hostel=${h.id}" class="search-result-item">
+        <strong>${h.name}</strong> <span style="color:var(--gray-400);font-size:12px;">${h.city} · ₹${h.price_per_month?.toLocaleString()}/mo</span>
+      </a>`
+    ).join(''));
+  }
+  if (data.scholarships?.length) {
+    html += renderSearchCategory('🎓 Scholarships', data.scholarships.map(s =>
+      `<a href="/pages/finance.html?tab=scholarships" class="search-result-item">
+        <strong>${s.name}</strong> <span style="color:var(--gray-400);font-size:12px;">${s.provider} · ₹${s.amount?.toLocaleString()}</span>
+      </a>`
+    ).join(''));
+  }
+  if (data.careers?.length) {
+    html += renderSearchCategory('💼 Careers', data.careers.map(c =>
+      `<a href="/pages/career.html?career=${c.id}" class="search-result-item">
+        <strong>${c.title}</strong> <span style="color:var(--gray-400);font-size:12px;">${c.category} · ${c.avg_salary}</span>
+      </a>`
+    ).join(''));
+  }
+  if (data.mentors?.length) {
+    html += renderSearchCategory('👥 Mentors', data.mentors.map(m =>
+      `<a href="/pages/studybuddy.html?mentor=${m.id}" class="search-result-item">
+        <strong>${m.name}</strong> <span style="color:var(--gray-400);font-size:12px;">${m.college} · ⭐ ${m.rating}</span>
+      </a>`
+    ).join(''));
+  }
+
+  dropdown.innerHTML = `
+    <style>
+      .search-result-item { display:block; padding:10px 16px; color:var(--gray-800); font-size:14px; transition:background 0.15s; }
+      .search-result-item:hover { background:var(--gray-50); color:var(--primary); }
+      .search-category-label { padding:8px 16px 4px; font-size:11px; font-weight:700; letter-spacing:1px; color:var(--gray-400); text-transform:uppercase; }
+    </style>
+    ${html}
+  `;
+  dropdown.classList.add('show');
+}
+
+function renderSearchCategory(label, items) {
+  return `<div class="search-category-label">${label}</div>${items}`;
+}
+
+function performSearch() {
+  const q = document.getElementById('globalSearchInput')?.value.trim();
+  if (q) window.location.href = `/pages/search-results.html?q=${encodeURIComponent(q)}`;
+}
+
+function quickSearch(type) {
+  const input = document.getElementById('globalSearchInput');
+  if (input) {
+    input.value = type;
+    input.focus();
+    liveSearch(type);
+  }
+}
+
+// ─── Scroll reveal ────────────────────────────────────────
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ─── Navbar scroll effect ──────────────────────────────────
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('mainNav');
+  if (nav) {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }
+}, { passive: true });
+
+// ─── Init auth UI ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  if (Auth.isLoggedIn()) updateNavForAuth();
+});

@@ -1,0 +1,33 @@
+const express = require('express');
+const router = express.Router();
+const { pool } = require('../config/db');
+
+// GET /api/search?q=keyword
+router.get('/', async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q || q.trim().length < 2) {
+      return res.status(400).json({ success: false, message: 'Query must be at least 2 characters' });
+    }
+    const term = `%${q.trim()}%`;
+
+    const [hostels] = await pool.query('SELECT id, name, city, price_per_month, rating, "hostel" as type FROM hostels WHERE name LIKE ? OR city LIKE ? LIMIT 5', [term, term]);
+    const [scholarships] = await pool.query('SELECT id, name, provider, amount, deadline, "scholarship" as type FROM scholarships WHERE name LIKE ? OR provider LIKE ? AND is_active=1 LIMIT 5', [term, term]);
+    const [careers] = await pool.query('SELECT id, title, category, avg_salary, "career" as type FROM careers WHERE title LIKE ? OR description LIKE ? LIMIT 5', [term, term]);
+    const [mentors] = await pool.query('SELECT m.id, u.name, u.college, m.rating, "mentor" as type FROM mentors m JOIN users u ON m.user_id = u.id WHERE u.name LIKE ? AND m.is_available=1 LIMIT 5', [term]);
+
+    const results = {
+      hostels,
+      scholarships,
+      careers,
+      mentors,
+      total: hostels.length + scholarships.length + careers.length + mentors.length
+    };
+
+    res.json({ success: true, data: results, query: q });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+module.exports = router;
